@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Pragma" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, maximum-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="wap-font-scale" content="no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="https://cdn.bootcss.com/jquery/1.12.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="__STATIC__/index/css/index.css">
+    <title>{$hotel.name}-预订详情</title>
+    <script>
+      (function (root) {
+        var docEl = document.documentElement,
+          timer = null,
+          width, last;
+        function changeRem () {
+          width = docEl.getBoundingClientRect().width;
+          if (last === width) { return; }
+          last = width;
+          root.rem = (width / 375) * 100;
+
+          if (/ZTE U930_TD/.test(navigator.userAgent)) {
+            root.rem = root.rem * 1.13;
+          }
+          docEl.style.fontSize = root.rem + 'px';
+        }
+        changeRem();
+        root.addEventListener('resize', function () {
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+        });
+        root.addEventListener('orientationchange', function () {
+          var getTarget = document.getElementById("landscape");
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+          if(window.orientation==90||window.orientation==-90){
+            getTarget.style.display = "block";
+          }else{
+            getTarget.style.display = "none";
+          }
+        });
+      })(window, undefined);
+    </script>
+</head>
+<body>
+<div style="width:95%;position:fixed; top:0; left: 0;background: #DFDFDF;color:#4B4B4B;font-size: 14px;height: 40px;padding: 10px 2.5%;">
+  <p style="line-height: 20px;float: left;" onclick="location.href='{:url('index/index/index')}'">
+    欢迎来到<b>{$hotel.name}</b>！<br>{eq name="user['is_special']" value="1"}管理员{else/}普通员工{/eq}：<b>{$user.username}</b>！
+  </p>
+  <a href="{:url('index/login/logout')}" style="display: block;float: right;background:#bbb;color: #fff;font-size: 16px;height: 40px;line-height: 40px;width: 80px;text-align: center;text-decoration: none;">退&nbsp;出</a>
+</div>
+<div class="boardInfoContain" style="margin-top: 60px;">
+    <div class="boardInfo">
+        <div class="info"><span>客户姓名：</span><span>{$book.name}</span></div>
+        <div class="info"><span>联系方式：</span><span>{$book.phone}</span></div>
+        <div class="info"><span>预定日期：</span><span>{:date('Y年m月d日',$book.daytime)}</span></div>
+        <div class="info"><span>宴会厅名：</span><span>{$book.hall_name}</span></div>
+        <div class="info"><span>场<b></b>次：</span><span>{eq name="book['chang']" value="1"}夜场{else/}午场{/eq}</span></div>
+        <div class="info"><span>宴会类型：</span><span>
+{switch name="book['genre']" }
+    {case value="1"}婚宴{/case}
+    {case value="2"}生日{/case}
+    {case value="3"}宵夜{/case}
+    {case value="4"}会议{/case}
+    {default /}其它
+{/switch}</span></div>
+        <div class="info"><span>餐<b></b>标：</span><span>{$book.biao}</span></div>
+        <div class="boardInfoRemark info"><span>备<b></b>注：</span><span>{$book.remark}</span></div>
+    </div>
+</div>
+</body>
+</html>

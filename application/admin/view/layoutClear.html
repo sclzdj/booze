@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--[if IE 9]>         <html class="ie9 no-focus" lang="zh"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-focus" lang="zh"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+
+    {block name="page-title"}<title>{$page_title|default='后台'} | {:config('web_site_title')} - ruimeng898</title>{/block}
+
+    <meta name="description" content="{:config('web_site_description')}">
+    <meta name="author" content="caiweiming">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0">
+
+    <!-- Icons -->
+    <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
+    <link rel="shortcut icon" href="__ADMIN_IMG__/favicons/favicon.ico">
+
+    <link rel="icon" type="image/png" href="__ADMIN_IMG__/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="__ADMIN_IMG__/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="__ADMIN_IMG__/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="__ADMIN_IMG__/favicons/favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="__ADMIN_IMG__/favicons/favicon-192x192.png" sizes="192x192">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="__ADMIN_IMG__/favicons/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="__ADMIN_IMG__/favicons/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="__ADMIN_IMG__/favicons/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="__ADMIN_IMG__/favicons/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="__ADMIN_IMG__/favicons/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="__ADMIN_IMG__/favicons/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="__ADMIN_IMG__/favicons/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="__ADMIN_IMG__/favicons/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="__ADMIN_IMG__/favicons/apple-touch-icon-180x180.png">
+    <!-- END Icons -->
+
+    <!-- Stylesheets -->
+    <!-- Page JS Plugins CSS -->
+    {notempty name="_css_files"}
+    <link rel="stylesheet" href="{:minify('group', $_css_files)}">
+    {/notempty}
+
+    {block name="plugins-css"}{/block}
+
+    <!-- Bootstrap and OneUI CSS framework -->
+    <link rel="stylesheet" id="css-main" href="{:minify('group', 'libs_css,core_css')}">
+    <link rel="stylesheet" id="css-theme" href="__ADMIN_CSS__/themes/{:config('system_color')}.min.css">
+
+    <!--页面css-->
+    {block name="style"}{/block}
+    {notempty name="Think.get._pop"}
+    <style>
+        #page-container.sidebar-l.sidebar-o {
+            padding-left: 0;
+        }
+        .header-navbar-fixed #main-container {
+            padding-top: 0;
+        }
+    </style>
+    {/notempty}
+    <!-- END Stylesheets -->
+
+    <!--自定义css-->
+    <link rel="stylesheet" href="__ADMIN_CSS__/custom.css">
+    <script>
+        // url
+        var dolphin = {
+            'top_menu_url': '{:url("admin/ajax/getSidebarMenu")}',
+            'theme_url': '{:url("admin/ajax/setTheme")}',
+            'jcrop_upload_url': '{:url("admin/attachment/upload", ["dir" => "images", "from" => "jcrop", "module" => request()->module()])}',
+            'editormd_upload_url': '{:url("admin/attachment/upload", ["dir" => "images", "from" => "editormd", "module" => request()->module()])}',
+            'editormd_mudule_path': '__LIBS__/editormd/lib/',
+            'ueditor_upload_url': '{:url("admin/attachment/upload", ["dir" => "images", "from" => "ueditor", "module" => request()->module()])}',
+            'wangeditor_upload_url': '{:url("admin/attachment/upload", ["dir" => "images", "from" => "wangeditor", "module" => request()->module()])}',
+            'wangeditor_emotions': "__LIBS__/wang-editor/emotions.data",
+            'ckeditor_img_upload_url': '{:url("admin/attachment/upload", ["dir" => "images", "from" => "ckeditor", "module" => request()->module()])}',
+            'WebUploader_swf': '__LIBS__/webuploader/Uploader.swf',
+            'file_upload_url': '{:url("admin/attachment/upload", ["dir" => "files", "module" => request()->module()])}',
+            'image_upload_url': '{:url("admin/attachment/upload", ["dir" => "images", "module" => request()->module()])}',
+            'get_level_data': '{:url("admin/ajax/getLevelData")}',
+            'quick_edit_url': '{:url("admin/system/quickEdit")}',
+            'triggers': {$field_triggers|default=[]|json_encode}, // 触发器集合
+            'field_hide': '{$field_hide|default=""}', // 需要隐藏的字段
+            'field_values': '{$field_values|default=""}',
+            'validate': '{$validate|default=""}', // 验证器
+            'validate_fields': '{$validate_fields|default=""}', // 验证字段
+            'search_field': '{:input("param.search_field", "")}', // 搜索字段
+            // 字段过滤
+            '_filter': '{$Request.param._filter ? $Request.param._filter : (isset($_filter) ? $_filter : "")}',
+            '_filter_content': '{$Request.param._filter_content == '' ? (isset($_filter_content) ? $_filter_content : "") : $Request.param._filter_content}',
+            '_field_display': '{$Request.param._field_display ? $Request.param._field_display : (isset($_field_display) ? $_field_display : "")}',
+            'get_filter_list': '{:url("admin/ajax/getFilterList")}',
+            'curr_url': '{:url("", $Request.route)}',
+        };
+    </script>
+</head>
+<body>
+        <!-- Page Content -->
+        <div class="content">
+            {// 页面提示钩子}
+            {:hook('page_tips')}
+            {// 主体内容}
+            {block name="content"}{/block}
+        </div>
+        <!-- END Page Content -->
+
+<!-- OneUI Core JS: jQuery, Bootstrap, slimScroll, scrollLock, Appear, CountTo, Placeholder, Cookie and App.js -->
+<script src="{:minify('group', 'core_js,libs_js')}"></script>
+
+<!-- Page JS Plugins -->
+<script src="__LIBS__/layer/layer.js"></script>
+{notempty name="_js_files"}
+<script src="{:minify('group', $_js_files)}"></script>
+{/notempty}
+
+<script>
+    jQuery(function () {
+        App.initHelpers(['appear', 'slimscroll', 'magnific-popup', 'table-tools']);
+        {notempty name="_js_init"}
+        App.initHelpers({$_js_init});
+        {/notempty}
+    });
+</script>
+
+<!--页面js-->
+{block name="script"}{/block}
+</body>
+</html>

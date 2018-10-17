@@ -1,0 +1,542 @@
+<div id="new-tab-pane" class="tab-pane active">
+    <div class="row data-table-toolbar">
+        <div class="col-sm-12">
+            <div class="toolbar-btn-action">
+            </div>
+        </div>
+    </div>
+    <div>
+        <table class="table table-builder table-hover table-bordered table-striped js-table-checkable">
+            <div class="find-content">
+                <div class="find-content-l">
+                    <img class="ip6-bg" src="{:getRequestHost()}\static\admin\img\find\iphone6splus.png">
+                    <div class="ip6-ppcontent">
+                    <img class="ip6-header" src="{:getRequestHost()}\static\admin\img\find\header.png">
+                    <div class="ip6-pcontent">
+                    <div class="ip6-content">
+                        <!-- 轮播图 -->
+                        <div onclick="showCarousel();" class="swiper-container">
+                            <div class="swiper-wrapper" id="carousel">
+                                {if condition="count($findCarousel) > 0"}
+                                    {foreach name='findCarousel' item='v'}
+                                        <p id="{$v.id}" class="swiper-slide p-nav">
+                                            <img src="{:getRequestHost()}\{$v.path}" alt="糟糕，图片不见了"/>
+                                        </p>
+                                    {/foreach}
+                                {else /}
+                                    <p class="swiper-slide p-nav" style="background-color: white;">
+                                        <img src="{:getRequestHost()}\static\admin\img\find\find_add30.png" alt="糟糕，图片不见了"/>
+                                    </p>
+                                {/if}
+                            </div>
+                        </div>
+                        <!-- 轮播图 end-->
+                        <!-- 公告 -->
+                        {if condition="count($findTextNotification) > 0"}
+                        <div onclick="showAnnouncement();" class="ip6-announcement" style="position:relative;" onclick="shake();">
+                            <div class="ip6-announcement-l">
+                                <div class="ip6-announcement-l-div">
+                                    <img src="{:getRequestHost()}\static\admin\img\find\kuaibao.png">
+                                    <span></span>
+                                </div>
+                            </div>
+                            <div class="ip6-announcement-m">
+                                	<marquee scrollamount="1" style="width: 94%;margin-left: 3%;margin-top: 2px;">
+                                    {foreach name='findTextNotification' item='v'}
+										<span onclick="announcementSkip({$v.click_mode},{$v.url},{$v.view});">{$v.title}</span>
+                                    {/foreach}
+                                    </marquee>
+                            </div>
+                            <div class="ip6-announcement-r"></div>
+                        </div>
+                        {else /}
+                            <img  onclick="showAnnouncement();" style="margin: 7px 0px;" src="{:getRequestHost()}\static\admin\img\find\find_add300.png">
+                        {/if}
+                        <!-- 公告 end-->
+                        <!-- 模块 -->
+                        {if condition="count($FindButtons) > 0"}
+                        <div onclick="showButtons();" id="buttons" class="ip6-module">
+                               <?php $i = 0; ?>
+                                {foreach name='FindButtons' item='v'}
+                                <div class="ip6-module-div" style="<?php 
+                                    $i++; 
+                                    if($i%3 === 0){
+                                        echo 'border-right: none;';
+                                    }
+                                    if($i%3 === 1){
+                                        echo 'border-left: none;';
+                                    }?>">
+                                    {if condition="$v['corner']"}
+                                        <img class="corner" src="{:getRequestHost()}\static\admin\img\find\recommend.png" alt="糟糕，图片不见了"/>
+                                    {/if}
+                                    <div class="ip6-module-img"><img src="{:getRequestHost()}\{$v.path}"></div>
+                                    <div class="ip6-title">{$v.label}</div>
+                                    <div class="ip6-title2">{$v.vice_label}</div>
+                                </div>
+                                {/foreach}
+                        </div>
+                        {else /}
+                            <img onclick="showButtons();" style="width:270px;" src="{:getRequestHost()}\static\admin\img\find\find_add60.png" alt="糟糕，图片不见了"/>
+                        {/if}
+                        <!-- 模块 end-->
+                        <!-- 通栏广告 -->
+                        <div id="leaderboard">   
+                        {if condition="count($FindLeaderboard) > 0"}
+                            {foreach name='FindLeaderboard' item='v'}
+                            <img onclick="showLeaderboard();" style="width:270px;height:70px;" class="ip6-arrange" src="{:getRequestHost()}\{$v.path}" alt="糟糕，图片不见了">
+                            {/foreach}
+                        {else /}
+                            <img onclick="showLeaderboard();" style="width:270px;height:70px;" class="ip6-arrange" src="{:getRequestHost()}\static\admin\img\find\find_add6.png" alt="糟糕，图片不见了"/>
+                        {/if}
+                        </div>
+                    </div>
+                    </div>
+                    <img class="ip6-footer" src="{:getRequestHost()}\static\admin\img\find\footer.png" >
+                    </div>
+                </div>
+                <div class="find-content-r">
+                    <!-- 编辑轮播图-->
+                    <div class="editdiv editCarouse">
+                        <div class="find-content-r-header">
+                            <h3 class="block-title">编辑轮播图</h3>
+                        </div>
+                        <div class="find-content-r-content">
+                            <div class="gridly gridlyCarouse edit-carouse-div">
+                                {if condition="count($findCarousel) > 0"}
+                                    {foreach name='findCarousel' item='v'}
+                                        <div id="{$v.id}">
+		                                    <img src="{:getRequestHost()}\{$v.path}" alt="糟糕，图片不见了"/>
+		                                    <a style="z-index:0;" class="edit-carouse" onclick="editCarousel({$v.id});" href="javascript:;"><img src="{:getRequestHost()}\static\admin\img\find\edit.png"></a>
+		                                    <a style="z-index:0;" class="delete-carouse" onclick="deleteCarousel({$v.id});" href="javascript:;"><img src="{:getRequestHost()}\static\admin\img\find\delete.png"></a>
+		                                </div>
+                                    {/foreach}
+                                {else /}
+                                {/if}
+                            </div>
+                        </div>
+                        <div class="find-content-r-footer">
+                            <button  onclick="addCarousel();" class="btn btn-minw btn-primary ajax-post" type="button">添加</button>
+                        </div>
+                    </div>
+                    <!-- 编辑轮播图end -->
+                    <!-- 编辑模块 -->
+                    <div class="editdiv editButtons" style="display: none;">
+                        <div class="find-content-r-header">
+                            <h3 class="block-title">编辑模块</h3>
+                        </div>
+                        <style type="text/css">
+                            
+                        </style>
+                        <div class="find-content-r-content">
+                            <div class="gridlyButtons edit-buttons-div">
+                            	{if condition="count($FindButtons) > 0"}
+	                                {foreach name='FindButtons' item='v'}
+	                                <div id="{$v.id}" class="ip6-module-edit-div">
+	                                    <div class="ip6-module-edit-img">
+	                                    	<img src="{:getRequestHost()}\{$v.path}">
+	                                    	<a style="z-index:0;" class="edit-buttons" onclick="editButtons({$v.id});" href="javascript:;"><img src="{:getRequestHost()}\static\admin\img\find\edit.png"></a>
+		                                    <a style="z-index:0;" class="delete-buttons" onclick="deleteButtons({$v.id});" href="javascript:;"><img src="{:getRequestHost()}\static\admin\img\find\delete.png"></a>
+	                                    </div>
+	                                    <div class="ip6-edit-title">{$v.label}</div>
+	                                    <div class="ip6-edit-title2">{$v.vice_label}</div>
+	                                </div>
+	                                {/foreach}
+	                            {/if}
+                            </div>
+                            
+                        </div>
+                        <div class="find-content-r-footer">
+                            <button  onclick="addButtons();" class="btn btn-minw btn-primary ajax-post" type="button">添加</button>
+                        </div>
+                    </div>
+                    <!-- 编辑模块end -->
+                    <!-- 编辑通栏广告 -->
+                    <div class="editdiv editLeaderboard" style="display: none;">
+                        <div class="find-content-r-header">
+                            <h3 class="block-title">编辑通栏广告</h3>
+                        </div>
+                        <div class="find-content-r-content">
+                            <div class="gridlyLeaderboard edit-carouse-div">
+                                {if condition="count($FindLeaderboard) > 0"}
+                                    {foreach name='FindLeaderboard' item='v'}
+                                    <div id="{$v.id}">
+                                        <img style="height: 70px;width:270px;" src="{:getRequestHost()}\{$v.path}"/>
+                                        <a class="edit-carouse" onclick="editLeaderboard({$v.id});" href="javascript:;"><img src="{:getRequestHost()}\static\admin\img\find\edit.png"></a>
+                                        <a class="delete-carouse" onclick="deleteLeaderboard({$v.id});" href="javascript:;"><img src="{:getRequestHost()}\static\admin\img\find\delete.png"></a>
+                                    </div>
+                                    {/foreach}
+                                {/if}
+                            </div>
+                        </div>
+                        <div class="find-content-r-footer">
+                            <button  onclick="addLeaderboard();" class="btn btn-minw btn-primary ajax-post" type="button">添加</button>
+                        </div>
+                    </div>
+                    <!-- 编辑通栏广告end -->
+                </div>
+            </div>
+        </table>
+    </div>
+    <div class="data-table-toolbar">
+        <div class="row">
+            <div class="col-sm-12">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- jquery  gridly支持-->
+<script src="{:getRequestHost()}\static\admin\jquery-gridly\javascripts\jquery.min.js" type="text/javascript"></script>
+<script type='text/javascript'>
+    var jQ=jQuery.noConflict()
+</script>
+<!-- swiper -->
+<script src="{:getRequestHost()}\static\admin\swiper\dist\js\swiper.min.js"></script>
+<!-- gridly -->
+<script src="{:getRequestHost()}\static\admin\jquery-gridly\javascripts\jquery.gridly.js" type="text/javascript"></script>
+<script type='text/javascript'>
+    var type = 'carousel'; //排序修改的类型 carousel、buttons、leaderboard
+    // 初始化
+    window.onload=function(){
+        newGridly(96,1,1);
+    };
+    document.getElementById('bg-gray-lighter').style.display = 'none';
+    var obj = document.getElementById('tab-pane');
+    var pobj = obj.parentNode;
+    var newobj = document.getElementById('new-tab-pane');
+    obj.style.display = 'none';
+    pobj.appendChild(newobj); 
+    // 实例化Swiper
+    var swiper = new Swiper('.swiper-container', {
+        pagination: '.swiper-pagination',
+        paginationClickable: true,
+        autoplay:3000
+    });
+    // 实例化gridly
+    // Generated by CoffeeScript 1.6.3
+    function newGridly(base,gutter,columns){
+        jQ('.gridly').gridly({
+          base: base,
+          gutter: gutter,
+          columns: columns,
+          callbacks:{ reordering: reordering , reordered: reordered }
+        });
+    }
+    var reordering =function($elements){
+    // Called before the drag and drop starts with the elements in their starting position.
+    //alert('start');
+    };
+ 
+    //拖动后回调
+    var reordered =function($elements){
+        // Called after the drag and drop ends with the elements in their ending position.
+        // 当前对象
+        var obj =this.reordered.arguments[0];
+        var arr = new Array();
+        $.each(obj,function(key,value){
+            arr[key] = value.id;
+        });
+        $.ajax({
+            type: "POST",
+            url: '{:getRequestHost()}/admin.php/admin/find/editWeight/type/'+type+'.html',
+            data:{data:arr},
+            dataType: 'json',
+            cache: false,
+            async: true,
+            success: function(data) {
+                console.log(data);
+                if(data[0] == 200){
+                    reload(arr);
+                }else{
+                    layer.msg(data[1]);
+                }
+            }
+        });
+    };
+    //重新加载内容
+    function reload(arr){
+        if(type == 'carousel'){
+            var obj = $('#carousel').html('');
+            var data = <?php echo json_encode($findCarousel)?>; 
+            var html = '';
+            $.each(arr,function(key,value){
+                for (var i = 0; i < data.length; i++) {
+                    if(value == data[i]['id']){
+                        html += '<p id="'+data[i]['id']+'" class="swiper-slide p-nav">';
+                        html += '<img src="{:getRequestHost()}\/'+data[i]['path']+'" alt="糟糕，图片不见了"/></p>';
+                    }
+                }
+            });
+            $('#carousel').append(html);
+        }
+        if(type == 'buttons'){
+            var obj = $('#buttons').html('');
+            var data = <?php echo json_encode($FindButtons)?>; 
+            var html = '';
+            var j = 0;
+            $.each(arr,function(key,value){
+                j++;
+                for (var i = 0; i < data.length; i++) {
+                    if(value == data[i]['id']){
+                        html += '<div class="ip6-module-div" style="';
+                        if(j%3 === 0){
+                            html += 'border-right: none;';
+                        }
+                        if(j%3 === 1){
+                            html += 'border-left: none;';
+                        }
+                        html += '">';
+                        if(data[i]['corner']){
+                            html += '<img class="corner" src="{:getRequestHost()}\/static\/admin\/img\/find\/recommend.png" alt="糟糕，图片不见了"/>';
+                        }
+                        html += '<div class="ip6-module-img"><img src="{:getRequestHost()}\/'+data[i]['path']+'"></div>';
+                        html += '<div class="ip6-title">'+data[i]['label']+'</div>';
+                        html += '<div class="ip6-title2">'+data[i]['vice_label']+'</div></div>';
+                    }
+                }
+            });
+            $('#buttons').append(html);
+        }
+        if(type == 'leaderboard'){
+            var obj = $('#leaderboard').html('');
+            var data = <?php echo json_encode($FindLeaderboard)?>; 
+            var html = '';
+            $.each(arr,function(key,value){
+                for (var i = 0; i < data.length; i++) {
+                    if(value == data[i]['id']){
+                        html += '<img onclick="showLeaderboard();" style="width:270px;height:70px;" class="ip6-arrange" src="{:getRequestHost()}\/'+data[i]['path']+'" alt="糟糕，图片不见了">';
+                    }
+                }
+            });
+            $('#leaderboard').append(html);
+                            
+        }
+    }
+    //显示轮播图
+    function showCarousel(){
+        jQ('.editCarouse').css('display','block');
+        jQ('.editLeaderboard').css('display','none');
+        jQ('.editButtons').css('display','none');
+        jQ(".gridlyCarouse").addClass("gridly");
+        jQ(".gridlyButtons").removeClass("gridly");
+        jQ(".gridlyLeaderboard").removeClass("gridly");
+        newGridly(96,1,1);
+        type = 'carousel';
+    }
+    
+    //显示模块（按钮）
+    function showButtons(){
+        jQ('.editButtons').css('display','block');
+        jQ('.editLeaderboard').css('display','none');
+        jQ('.editCarouse').css('display','none');
+        jQ(".gridlyButtons").addClass("gridly");
+        jQ(".gridlyLeaderboard").removeClass("gridly");
+        jQ(".gridlyCarouse").removeClass("gridly");
+        newGridly(70,10,5);
+        type = 'buttons';
+    }
+
+    //显示通栏广告
+    function showLeaderboard(){
+        jQ('.editLeaderboard').css('display','block');
+        jQ('.editButtons').css('display','none');
+        jQ('.editCarouse').css('display','none');
+        jQ(".gridlyLeaderboard").addClass("gridly");
+        jQ(".gridlyButtons").removeClass("gridly");
+        jQ(".gridlyCarouse").removeClass("gridly");
+        newGridly(77,1,1);
+        type = 'leaderboard';
+    }
+	//操作轮播图
+    function addCarousel(){
+        layer.open({
+          type: 2,
+          title: '新增轮播图',
+          shadeClose: true,
+          shade: 0.8,
+          area: ['80%', '90%'],
+          content: '{:getRequestHost()}/admin.php/admin/find/carouselAdd.html',
+          end : function(){
+        	  layer.load(0, {shade: false});
+        	  location.reload();
+          }
+        }); 
+    }
+    function editCarousel(id){
+        layer.open({
+          type: 2,
+          title: '编辑轮播图',
+          shadeClose: true,
+          shade: 0.8,
+          area: ['80%', '90%'],
+          content: '{:getRequestHost()}/admin.php/admin/find/carouselEdit/id/'+id+'.html',
+          end : function(){
+        	  layer.load(0, {shade: false});
+        	  location.reload();
+          }
+        });
+    }
+    function deleteCarousel(id){
+        var index2 = layer.confirm('确认删除该轮播图？', {
+          btn: ['确认','取消']
+        }, function(){
+        	layer.close(index2);
+        	var index = layer.load(0, {shade: false});
+        	$.ajax({
+        	    type: "POST",
+        	    url: '{:getRequestHost()}/admin.php/admin/find/carouselDelete/id/'+id+'.html',
+        	    data:{},
+        	    dataType: 'json',
+        	    cache: false,
+        	    async: true,
+        	    success: function(data) {
+        	    	if(data[0] == 200){
+        	    		location.reload();
+        	    	}else{
+        	    		layer.close(index);
+        	    		layer.msg(data[1]);
+        	    	}
+        	    }
+        	});
+        }, function(){
+        });
+    }
+  	//操作公告
+    function showAnnouncement(){
+        layer.open({
+          type: 2,
+          title: '公告列表',
+          shadeClose: true,
+          shade: 0.8,
+          area: ['95%', '95%'],
+          content: '{:getRequestHost()}/admin.php/admin/announcement/index.html',
+          end : function(){
+        	  layer.load(0, {shade: false});
+        	  location.reload();
+          }
+        }); 
+    }
+    // 点击公告跳转
+    function announcementSkip(skip,url,view){
+        switch(skip){
+            case 'url':
+                layer.msg('跳转到URL：'+url);
+                break;
+            case 'nts_go_view':
+                layer.msg('跳转到客户端视图：'+view);
+                break;
+            case 'call':
+                layer.msg('拨打电话');
+                break;
+            default:
+                layer.msg('跳转失败');
+        }
+    }
+    // 操作模块（按钮）
+    function addButtons(){
+    	layer.open({
+            type: 2,
+            title: '新增模块',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['80%', '90%'],
+            content: '{:getRequestHost()}/admin.php/admin/find/buttonsAdd.html',
+            end : function(){
+          	  layer.load(0, {shade: false});
+          	  location.reload();
+            }
+          }); 
+    }
+    function editButtons(id){
+        layer.open({
+          type: 2,
+          title: '编辑模块',
+          shadeClose: true,
+          shade: 0.8,
+          area: ['80%', '90%'],
+          content: '{:getRequestHost()}/admin.php/admin/find/buttonsEdit/id/'+id+'.html',
+          end : function(){
+        	  layer.load(0, {shade: false});
+        	  location.reload();
+          }
+        });
+    }
+    function deleteButtons(id){
+        var index2 = layer.confirm('确认删除该模块？', {
+          btn: ['确认','取消']
+        }, function(){
+        	layer.close(index2);
+        	var index = layer.load(0, {shade: false});
+        	$.ajax({
+        	    type: "POST",
+        	    url: '{:getRequestHost()}/admin.php/admin/find/buttonsDelete/id/'+id+'.html',
+        	    data:{},
+        	    dataType: 'json',
+        	    cache: false,
+        	    async: true,
+        	    success: function(data) {
+        	    	if(data[0] == 200){
+        	    		location.reload();
+        	    	}else{
+        	    		layer.close(index);
+        	    		layer.msg(data[1]);
+        	    	}
+        	    }
+        	});
+        }, function(){
+        });
+    }
+    // 操作通栏广告
+    function addLeaderboard(){
+        layer.open({
+            type: 2,
+            title: '新增通栏广告',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['80%', '90%'],
+            content: '{:getRequestHost()}/admin.php/admin/find/leaderboardAdd.html',
+            end : function(){
+              layer.load(0, {shade: false});
+              location.reload();
+            }
+        }); 
+    }
+    function editLeaderboard(id){
+        layer.open({
+          type: 2,
+          title: '编辑通栏广告',
+          shadeClose: true,
+          shade: 0.8,
+          area: ['80%', '90%'],
+          content: '{:getRequestHost()}/admin.php/admin/find/leaderboardEdit/id/'+id+'.html',
+          end : function(){
+              layer.load(0, {shade: false});
+              location.reload();
+          }
+        });
+    }
+    function deleteLeaderboard(id){
+        var index2 = layer.confirm('确认删除该通栏广告？', {
+          btn: ['确认','取消']
+        }, function(){
+            layer.close(index2);
+            var index = layer.load(0, {shade: false});
+            $.ajax({
+                type: "POST",
+                url: '{:getRequestHost()}/admin.php/admin/find/leaderboardDelete/id/'+id+'.html',
+                data:{},
+                dataType: 'json',
+                cache: false,
+                async: true,
+                success: function(data) {
+                    if(data[0] == 200){
+                        location.reload();
+                    }else{
+                        layer.close(index);
+                        layer.msg(data[1]);
+                    }
+                }
+            });
+        }, function(){
+        });
+    }
+</script>

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>宴会预定-{$hotel['name']}</title>
+    <link rel="stylesheet" href="__STATIC__/website/css/index.css">
+    <link rel="stylesheet" href="__STATIC__/website/css/dataPicker.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="Pragma" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, maximum-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="wap-font-scale" content="no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="https://cdn.bootcss.com/jquery/1.12.2/jquery.min.js"></script>
+    <script src="__STATIC__/website/js/dataPicker.js"></script>
+    <script>
+      (function (root) {
+        var docEl = document.documentElement,
+          timer = null,
+          width, last;
+        function changeRem () {
+          width = docEl.getBoundingClientRect().width;
+          if (last === width) { return; }
+          last = width;
+          root.rem = (width / 375) * 100;
+
+          if (/ZTE U930_TD/.test(navigator.userAgent)) {
+            root.rem = root.rem * 1.13;
+          }
+          docEl.style.fontSize = root.rem + 'px';
+        }
+        changeRem();
+        root.addEventListener('resize', function () {
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+        });
+        root.addEventListener('orientationchange', function () {
+          var getTarget = document.getElementById("landscape");
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+          if(window.orientation==90||window.orientation==-90){
+            getTarget.style.display = "block";
+          }else{
+            getTarget.style.display = "none";
+          }
+        });
+      })(window, undefined);
+    </script>
+</head>
+<body>
+<div class="contain formStatus">
+    <div class="errorMsg"><span>请填写您的预订信息</span></div>
+    <div class="title">请输入个人信息</div>
+    <div class="formSection">
+        <div class="formRow">
+            <div class="formRowLabel">姓名</div>
+            <div class="formRowValue"><input type="text" placeholder="请输入您的姓名" name="name" id="name"></div>
+        </div>
+        <div class="formRow">
+            <div class="formRowLabel">手机</div>
+            <div class="formRowValue"><input type="text" placeholder="请输入您的手机" name="phone" id="phone"></div>
+        </div>
+    </div>
+    <div class="title">请输入预订详情</div>
+    <div class="formSection">
+        <div class="formRow">
+            <div class="formRowLabel">宴会厅</div>
+            <div class="formRowValue">
+                <select name="hall_id" id="offline">
+                    <option value="">请选择</option>
+                    {volist name="halls" id="vo"}
+                    <option value="{$vo.id}">{$vo.name}</option>
+                    {/volist}
+                </select>
+            </div>
+            <div class="formRowIcon"></div>
+        </div>
+        <div class="formRow"   id="showDate">
+            <div class="formRowLabel">预订日期</div>
+            <div class="formRowValue">
+                <input type="text" name="date" id="date" disabled placeholder="请选择日期">
+            </div>
+            <div class="formRowIcon"></div>
+        </div>
+        <div class="formRow">
+            <div class="formRowLabel">时间段</div>
+            <div class="formRowValue">
+                <select name="chang" id="timeLine">
+                    <option value="0">中午</option>
+                    <option value="1">晚上</option>
+                </select>
+            </div>
+            <div class="formRowIcon"></div>
+        </div>
+        <!-- <div class="formRow">
+            <div class="formRowLabel">详细餐标</div>
+            <div class="formRowValue">
+                <input type="text" placeholder="请输入您的详细餐标" name="biao" id="levelNumber">
+            </div>
+        </div> -->
+    </div>
+    <div class="button"><span>预订</span></div>
+    <div class="modal">
+        <div class="mask"></div>
+        <div class="modalContent">
+            <div class="modalTitle"></div>
+            <div class="modalBtn">确定</div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+  $(function () {
+    //插件显示日期
+    showDate.onclick = function () {
+      var dt = new DateTimePicker.Date({
+        lang: 'zh-CN',
+        default: date.value
+      })
+      dt.on('selected', function (formatDate, now) {
+        console.log('selected date: ', formatDate, now)
+        date.value = formatDate
+      })
+    };
+
+    //预定成功
+    $(".button").on("click",function () {
+      //获取填写的表单数据
+      var obj = {
+        name:$("#name").val(),
+        phone:$("#phone").val(),
+        daytime:$("#date").val(),
+        hall_id:$("#offline").val(),
+        chang:$("#timeLine").val(),
+        //biao:$("#levelNumber").val(),
+      };
+      $.ajax({
+        type : 'POST',
+        url : '',
+        data : obj,
+        dataType : 'JSON',
+        success : function(data){
+          showModal(data.error);
+        }
+      });
+      
+    });
+    //关闭弹出框
+    $(".modalBtn").on("click",function () {
+      $('.modal').hide();
+    })
+  });
+  function showModal(msg) {
+    $('.modal').show();
+    $('.modalTitle').html(msg)
+  }
+</script>
+</html>

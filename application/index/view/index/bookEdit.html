@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>{$hotel.name}-修改预订</title>
+    <link rel="stylesheet" href="__STATIC__/index/css/index.css">
+    <link rel="stylesheet" href="__STATIC__/index/css/dataPicker.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="Pragma" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, maximum-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="wap-font-scale" content="no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="https://cdn.bootcss.com/jquery/1.12.2/jquery.min.js"></script>
+    <script src="__STATIC__/website/js/dataPicker.js"></script>
+    <link rel="stylesheet" href="__STATIC__/website/css/dataPicker.css">
+    <script>
+      (function (root) {
+        var docEl = document.documentElement,
+          timer = null,
+          width, last;
+        function changeRem () {
+          width = docEl.getBoundingClientRect().width;
+          if (last === width) { return; }
+          last = width;
+          root.rem = (width / 375) * 100;
+
+          if (/ZTE U930_TD/.test(navigator.userAgent)) {
+            root.rem = root.rem * 1.13;
+          }
+          docEl.style.fontSize = root.rem + 'px';
+        }
+        changeRem();
+        root.addEventListener('resize', function () {
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+        });
+        root.addEventListener('orientationchange', function () {
+          var getTarget = document.getElementById("landscape");
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+          if(window.orientation==90||window.orientation==-90){
+            getTarget.style.display = "block";
+          }else{
+            getTarget.style.display = "none";
+          }
+        });
+      })(window, undefined);
+    </script>
+</head>
+<body>
+<div style="width:95%;position:fixed; top:0; left: 0;background: #DFDFDF;color:#4B4B4B;font-size: 14px;height: 40px;padding: 10px 2.5%;">
+  <p style="line-height: 20px;float: left;" onclick="location.href='{:url('index/index/index')}'">
+    欢迎来到<b>{$hotel.name}</b>！<br>{eq name="user['is_special']" value="1"}管理员{else/}普通员工{/eq}：<b>{$user.username}</b>！
+  </p>
+  <a href="{:url('index/login/logout')}" style="display: block;float: right;background:#bbb;color: #fff;font-size: 16px;height: 40px;line-height: 40px;width: 80px;text-align: center;text-decoration: none;">退&nbsp;出</a>
+</div>
+<div class="contain formStatus" style="margin-top: 60px;">
+    <div class="formSection">
+        <div class="formRow">
+            <div class="formRowLabel">客户姓名</div>
+            <div class="formRowValue"><input type="text" placeholder="请输入客户姓名" name="name" value="{$book.name}" id="name"></div>
+        </div>
+        <div class="formRow">
+            <div class="formRowLabel">客户手机</div>
+            <div class="formRowValue"><input type="text" placeholder="请输入客户手机" name="phone" value="{$book.phone}" id="phone"></div>
+        </div>
+    </div>
+
+    <div class="formSection">
+        <div class="formRow">
+            <div class="formRowLabel">宴会厅</div>
+            <div class="formRowValue">
+                <select id="offline" name="hall_id">
+                    <option value="">请选择</option>
+                    {volist name="halls" id="vo"}
+                    <option value="{$vo.id}" {eq name="book['hall_id']" value="$vo['id']"}selected="selected"{/eq}>{$vo.name}</option>
+                    {/volist}
+                </select>
+            </div>
+            <div class="formRowIcon"></div>
+        </div>
+        <div class="formRow"  id="showDate">
+            <div class="formRowLabel">预订日期</div>
+            <div class="formRowValue">
+                <input type="text" id="date" name="daytime" value="{:date('Y-m-d',$book.daytime)}" disabled placeholder="请选择日期">
+            </div>
+            <div class="formRowIcon"></div>
+        </div>
+        <div class="formRow">
+            <div class="formRowLabel">场次</div>
+            <div class="formRowValue">
+                <select id="timeLine" name="chang">
+                    <option value="0" {eq name="book['chang']" value="0"}selected="selected"{/eq}>中午</option>
+                    <option value="1" {eq name="book['chang']" value="1"}selected="selected"{/eq}>晚上</option>
+                </select>
+            </div>
+            <div class="formRowIcon"></div>
+        </div>
+    </div>
+    <div class="formSection">
+        <div class="formRow">
+            <div class="formRowLabel">宴会类型</div>
+            <div class="formRowValue">
+                <select name="genre" id="genre">
+                    <option value="0" {eq name="book['genre']" value="0"}selected="selected"{/eq}>其它</option>
+                    <option value="1" {eq name="book['genre']" value="1"}selected="selected"{/eq}>婚宴</option>
+                    <option value="2" {eq name="book['genre']" value="2"}selected="selected"{/eq}>生日</option>
+                    <option value="3" {eq name="book['genre']" value="3"}selected="selected"{/eq}>宵夜</option>
+                    <option value="4" {eq name="book['genre']" value="4"}selected="selected"{/eq}>会议</option>
+                </select>
+            </div>
+            <div class="formRowIcon"></div>
+        </div>
+    </div>
+    <div class="formSection">
+        <div class="formRow">
+            <div class="formRowLabel">详细标餐</div>
+            <div class="formRowValue">
+                <input type="text" name="biao" value="{$book.biao}" placeholder="请输入您的详细标餐" id="levelNumber">
+            </div>
+        </div>
+    </div>
+    <div class="formSection">
+        <div class="formTextArea">
+            <div class="formRowLabel">备注</div>
+            <textarea id="remark" name="name" placeholder="输入备注">{$book.remark}</textarea>
+        </div>
+    </div>
+    <div class="submitBtn">提交</div>
+    <div class="modal">
+        <div class="mask"></div>
+        <div class="modalContent">
+            <div class="modalTitle"></div>
+            <div class="modalBtn">确定</div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+  $(function () {
+    //插件显示日期
+    showDate.onclick = function () {
+      var dt = new DateTimePicker.Date({
+        lang: 'zh-CN',
+        default: date.value
+      })
+      dt.on('selected', function (formatDate, now) {
+        date.value = formatDate
+      })
+    };
+
+    //预定成功
+    $(".submitBtn").on("click",function () {
+      //获取填写的表单数据
+      var obj = {
+        name:$("#name").val(),
+        phone:$("#phone").val(),
+        daytime:$("#date").val(),
+        hall_id:$("#offline").val(),
+        chang:$("#timeLine").val(),
+        biao:$("#levelNumber").val(),
+        remark:$("#remark").val(),
+        genre:$("#genre").val(),
+        id:{$book.id}
+      };
+      $.ajax({
+          type:'POST',
+          url:'',
+          data:obj,
+          dataType:'JSON',
+          success:function(data){
+              showModal(data.error);
+          }
+        });
+    });
+    //关闭弹出框
+    $(".modalBtn").on("click",function () {
+      $('.modal').hide();
+    })
+  });
+  function showModal(msg) {
+    $('.modal').show();
+    $('.modalTitle').html(msg)
+  }
+</script>
+</html>

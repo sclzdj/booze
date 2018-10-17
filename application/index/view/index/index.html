@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{$hotel.name}-首页</title>
+    <link rel="stylesheet" href="__STATIC__/index/css/index.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="Pragma" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, maximum-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="wap-font-scale" content="no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="https://cdn.bootcss.com/jquery/1.12.2/jquery.min.js"></script>
+    <script src="__STATIC__/index/js/pick.js"></script>
+    <script>
+      (function (root) {
+        var docEl = document.documentElement,
+          timer = null,
+          width, last;
+
+        function changeRem() {
+          width = docEl.getBoundingClientRect().width;
+          if (last === width) {
+            return;
+          }
+          last = width;
+          root.rem = (width / 375) * 100;
+
+          if (/ZTE U930_TD/.test(navigator.userAgent)) {
+            root.rem = root.rem * 1.13;
+          }
+          docEl.style.fontSize = root.rem + 'px';
+        }
+
+        changeRem();
+        root.addEventListener('resize', function () {
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+        });
+        root.addEventListener('orientationchange', function () {
+          var getTarget = document.getElementById("landscape");
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+          if (window.orientation == 90 || window.orientation == -90) {
+            getTarget.style.display = "block";
+          } else {
+            getTarget.style.display = "none";
+          }
+        });
+      })(window, undefined);
+    </script>
+</head>
+<body>
+<div style="width:95%;position:fixed; top:0; left: 0;background: #DFDFDF;color:#4B4B4B;font-size: 14px;height: 40px;padding: 10px 2.5%;">
+  <p style="line-height: 20px;float: left;" onclick="location.href='{:url('index/index/index')}'">
+    欢迎来到<b>{$hotel.name}</b>！<br>{eq name="user['is_special']" value="1"}管理员{else/}普通员工{/eq}：<b>{$user.username}</b>！
+  </p>
+  <a href="{:url('index/login/logout')}" style="display: block;float: right;background:#bbb;color: #fff;font-size: 16px;height: 40px;line-height: 40px;width: 80px;text-align: center;text-decoration: none;">退&nbsp;出</a>
+</div>
+<div class="home" style="margin-top: 60px;">
+    <form action="" name="calender_content">
+        <div class="homeNav">
+            <div class="homeDate">
+                <div class="leftIcon" onClick="BtN('year_d')"></div>
+                <div class="dateContent">
+                    <select onChange="chaCld()" name="SY">
+                        <script>
+                          for (i = 1900; i < 2050; i++)
+                            document.write('<option>' + i + "年")
+                        </script>
+                    </select>
+                </div>
+                <div class="rightIcon" onClick="BtN('year_a')"></div>
+            </div>
+            <div class="homeDate">
+                <div class="leftIcon" onClick="BtN('month_d')"></div>
+                <div class="dateContent">
+                    <select onChange="chaCld()" name="SM">
+                        <script>
+                          for (i = 1; i < 13; i++) document.write('<option>' + i + "月")
+                        </script>
+                    </select>
+                </div>
+                <div class="rightIcon" onClick="BtN('month_a')"></div>
+            </div>
+            <div class="goToday" onClick="BtN('')">返回今天</div>
+        </div>
+        <div class="homeSelect dateScreen">
+
+            <table>
+                <colgroup>
+                    <col width="14.3%">
+                    <col width="14.3%">
+                    <col width="14.3%">
+                    <col width="14.3%">
+                    <col width="14.3%">
+                    <col width="14.3%">
+                </colgroup>
+                <thead>
+                <tr>
+                    <td>S</td>
+                    <td>M</td>
+                    <td>T</td>
+                    <td>W</td>
+                    <td>T</td>
+                    <td>F</td>
+                    <td>S</td>
+                </tr>
+                </thead>
+                <tbody id="cal-content"></tbody>
+            </table>
+        </div>
+        <div class="lunarCard">
+            <div class="lunarCalendar" id="setLunar">
+            </div>
+            <div class="lunarFit">
+                <div class="fitting">
+                    <span class="color-108ee9">宜：</span>
+                    <span id="day_good">{$day.good}</span>
+                </div>
+                <div class="unfit">
+                    <span class=" color-f04134">忌：</span>
+                    <span id="day_bad">{$day.bad}</span>
+                </div>
+                <div class="remark" style="margin-top: 20px;font-size: 13px;">
+                    <span>备注：</span>
+                    <span id="day_remark">{$day.remark}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="startBtn" onclick="getTime()">开始预订</div>
+        <div class="btnGroup">
+            <span onclick="location.href='{:url('index/index/whereHallDate')}'">宴会厅查看</span>
+            <span onclick="location.href='{:url('index/index/bookLst')}{eq name='user["is_special"]' value='1'}?is_special=1{/eq}'">{eq name='user["is_special"]' value='1'}所有预订{else/}我的预订{/eq}</span>
+        </div>
+    </form>
+</div>
+<script>
+  var toSaveDateYear, toSaveDateMonth, toSaveDateDay;
+  $(function () {
+    var html = '';
+    var Num; //Num计算出日期位置
+    for (i = 0; i < 6; i++) {
+      html = html + "<tr>";
+      for (j = 0; j < 7; j++) {
+        Num = i * 7 + j;
+        if (j == 0 || j == 6) {
+          html = html + '' +
+            '<td  onclick="addDay(' + Num + ',setToTime);addBorder(this)">' +
+            '<div class="dateShow">' +
+            '<div id="SD' + Num + '" class="numberShow color-f04134"></div>' +
+            '<div id="LD' + Num + '" class="festival"></div>' +
+            '</div>' +
+            '</td>'
+        } else {
+          html = html + '' +
+            '<td  onclick="addDay(' + Num + ',setToTime);addBorder(this)">' +
+            '<div class="dateShow">' +
+            '<div id="SD' + Num + '" class="numberShow"></div>' +
+            '<div id="LD' + Num + '" class="festival"></div>' +
+            '</div>' +
+            '</td>'
+        }
+      }
+      html = html + '</tr>';
+    }
+    $("#cal-content").append($.parseHTML(html));
+    initial();
+  });
+  function addBorder(that) {
+    $(".borderColor").removeClass("borderColor");
+    $(that).find(".dateShow").addClass("borderColor");
+  }
+  //  点击的时候给后台的函数
+  function getTime() {
+    var daytime=toSaveDateYear+'-'+toSaveDateMonth+'-'+toSaveDateDay;
+    if(toSaveDateYear==undefined){
+      daytime='{$date}';
+    }
+    location.href="{:url('index/index/hallLst')}?daytime="+daytime;
+  }
+  //点击日期回调保存已经选的日期,
+  function setToTime(y, m, d) {
+    toSaveDateYear = y;
+    toSaveDateMonth = m;
+    toSaveDateDay = d;
+    //可以操作，备注和 宜 忌 操作
+    $.ajax({
+      type:'GET',
+      url:'?daytime='+toSaveDateYear+'-'+toSaveDateMonth+'-'+toSaveDateDay,
+      dataType:'JSON',
+      success:function(data){
+        if(data.code!=200){
+          alert(data.error);
+          return false;
+        }
+        $('#day_good').html(data.data.good);
+        $('#day_bad').html(data.data.bad);
+        $('#day_remark').html(data.data.remark);
+      }
+    });
+  }
+</script>
+</body>
+</html>

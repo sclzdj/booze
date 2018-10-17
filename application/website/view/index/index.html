@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>酒店-{$hotel['name']}</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Pragma" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, maximum-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="wap-font-scale" content="no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="https://cdn.bootcss.com/jquery/1.12.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="__STATIC__/website/css/index.css">
+    <link rel="stylesheet" href="__STATIC__/website/css/swiper-3.4.2.min.css">
+    <script src="__STATIC__/website/js/swiper-3.4.2.jquery.min.js"></script>
+    <script>
+      (function (root) {
+        var docEl = document.documentElement,
+          timer = null,
+          width, last;
+        function changeRem () {
+          width = docEl.getBoundingClientRect().width;
+          if (last === width) { return; }
+          last = width;
+          root.rem = (width / 375) * 100;
+
+          if (/ZTE U930_TD/.test(navigator.userAgent)) {
+            root.rem = root.rem * 1.13;
+          }
+          docEl.style.fontSize = root.rem + 'px';
+        }
+        changeRem();
+        root.addEventListener('resize', function () {
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+        });
+        root.addEventListener('orientationchange', function () {
+          var getTarget = document.getElementById("landscape");
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+          if(window.orientation==90||window.orientation==-90){
+            getTarget.style.display = "block";
+          }else{
+            getTarget.style.display = "none";
+          }
+        });
+      })(window, undefined);
+    </script>
+</head>
+<body>
+<div class="contain home">
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+           {volist name="hotel['img_list']" id="vo"}
+            <div class="swiper-slide banner"><img src="__STATIC__/../{$vo}" alt="酒店轮播图"></div>
+           {/volist}
+        </div>
+    </div>
+    <div class="des" {if condition="$hotel['url'] neq ''"}onclick="location.href='{$hotel['url']}'"{/if}>
+        <div class="title">{$hotel['name']}</div>
+        <p>{$hotel['info']}</p>
+    </div>
+    <div class="foodHome">
+        <div class="nav">
+            <div class="name"><span>宴会厅</span></div>
+            <a href="{:url('index/hallLst',['hotel_id'=>$hotel_id])}"><div class="more">更多》</div></a>
+        </div>
+        <div class="foodContent">
+            {volist name="halls" id="vo"}
+            <dl>
+                <dt onclick="location.href='{:url('index/hallInfo',['hotel_id'=>$hotel_id,'id'=>$vo['id']])}'"><img src="__STATIC__/../{$vo.main_img}" alt="宴会厅主图"></dt>
+                <dd {if condition="$vo['url'] neq ''"}onclick="location.href='{$vo['url']}'" style="color: #1F4B90;"{/if}>{$vo.name}</dd>
+            </dl>
+            {/volist}
+        </div>
+    </div>
+    <a href="{:url('index/book',['hotel_id'=>$hotel_id])}"><div class="button"><span>我要预订</span></div></a>
+    <div class="bannerModal">
+        <img src="" alt="">
+    </div>
+</div>
+</body>
+<script>
+  $(function () {
+    //初始化banner;
+    var swiper = new Swiper('.swiper-container', {
+      autoplay: 5000
+    });
+    //banner图片点击图片放大事件
+    $('.banner').on('click', function () {
+      var src = $(this).find('img').prop('src');
+      $('.bannerModal').show();
+      $('.bannerModal').find('img').prop('src', src);
+    });
+    //关闭banner弹出框
+    $('.bannerModal').on('click', function () {
+      $('.bannerModal').hide();
+    })
+  })
+</script>
+</html>

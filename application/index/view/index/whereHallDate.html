@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>{$hotel.name}-宴会厅日期选择</title>
+    <link rel="stylesheet" href="__STATIC__/index/css/index.css">
+    <link rel="stylesheet" href="__STATIC__/index/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="__STATIC__/index/css/bootstrap.css" >
+    <meta charset="UTF-8">
+    <meta http-equiv="Pragma" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, maximum-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="wap-font-scale" content="no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="https://cdn.bootcss.com/jquery/1.12.2/jquery.min.js"></script>
+    <script src="__STATIC__/index/js/bootstrap-datepicker.min.js"></script>
+    <script src="__STATIC__/index/js/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script>
+      (function (root) {
+        var docEl = document.documentElement,
+          timer = null,
+          width, last;
+        function changeRem () {
+          width = docEl.getBoundingClientRect().width;
+          if (last === width) { return; }
+          last = width;
+          root.rem = (width / 375) * 100;
+
+          if (/ZTE U930_TD/.test(navigator.userAgent)) {
+            root.rem = root.rem * 1.13;
+          }
+          docEl.style.fontSize = root.rem + 'px';
+        }
+        changeRem();
+        root.addEventListener('resize', function () {
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+        });
+        root.addEventListener('orientationchange', function () {
+          var getTarget = document.getElementById("landscape");
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+          if(window.orientation==90||window.orientation==-90){
+            getTarget.style.display = "block";
+          }else{
+            getTarget.style.display = "none";
+          }
+        });
+      })(window, undefined);
+    </script>
+</head>
+<body>
+<div style="width:95%;position:fixed; top:0; left: 0;background: #DFDFDF;color:#4B4B4B;font-size: 14px;height: 40px;padding: 10px 2.5%;">
+  <p style="line-height: 20px;float: left;" onclick="location.href='{:url('index/index/index')}'">
+    欢迎来到<b>{$hotel.name}</b>！<br>{eq name="user['is_special']" value="1"}管理员{else/}普通员工{/eq}：<b>{$user.username}</b>！
+  </p>
+  <a href="{:url('index/login/logout')}" style="display: block;float: right;background:#bbb;color: #fff;font-size: 16px;height: 40px;line-height: 40px;width: 80px;text-align: center;text-decoration: none;">退&nbsp;出</a>
+</div>
+<div class="contain formStatus" style="margin-top: 60px;">
+    <div class="formSection selectScreen">
+        <div class="formRow">
+            <div class="formRowLabel">宴会厅</div>
+            <div class="formRowValue">
+                <select id="offline">
+                    {volist name="halls" id="vo"}
+                    <option value="{$vo.id}">{$vo.name}</option>
+                    {/volist}
+                </select>
+            </div>
+            <div class="formRowIcon"></div>
+        </div>
+        <div class="formRow">
+            <div class="formRowLabel">预定日期</div>
+            <div class="formRowValue formRowValueClick">
+                <input size="16" type="text" readonly class="form_datetime" value="">
+            </div>
+            <div class="formRowIcon"></div>
+        </div>
+    </div>
+    <div class="dateScreen">
+        <table>
+            <thead>
+                <tr>
+                    <td>日</td>
+                    <td>一</td>
+                    <td>二</td>
+                    <td>三</td>
+                    <td>四</td>
+                    <td>五</td>
+                    <td>六</td>
+                </tr>
+            </thead>
+            <tbody id="date_list">
+            {volist name="data" id="vo"}
+            <tr>
+                {volist name="vo" id="v"}
+                    {eq name="v" value=""}
+                    <td></td>
+                    {else/}
+                    <td>
+                        <div class="dateInfo">{$v.day}</div>
+                        <div class="screenSelect">
+                            {php}
+                            if(!in_array(0,$v['chang'])){
+                                echo '<span class="colorFree"><a href="'.url('index/index/book',['hall_id'=>$v['hall_id'],'daytime'=>$v['daytime'],'chang'=>0]).'">午</a></span>';
+                            }else{
+                                echo '<span class="colorBusy">午</span>';
+                            }
+                            {/php}/{php}
+                            if(!in_array(1,$v['chang'])){
+                                echo '<span class="colorFree"><a href="'.url('index/index/book',['hall_id'=>$v['hall_id'],'daytime'=>$v['daytime'],'chang'=>1]).'">晚</a></span>';
+                            }else{
+                                echo '<span class="colorBusy">晚</span>';
+                            }
+                            {/php}
+                        </div>
+                    </td>
+                    {/eq}
+                {/volist}
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+      var timer = new Date();
+      var year = timer.getFullYear();
+      var month = timer.getMonth();
+      var arra = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+      $('.form_datetime').val(year+' '+arra[month]);
+      $(".form_datetime").datepicker({
+        language:'zh-CN',
+        format:'yyyy mm',
+        autoclose: true,
+        startView: 2,
+        maxViewMode: 2,
+        minViewMode:1
+      }).on("changeDate",function (ev) {
+        var boardValue = $('#offline').val();
+        var dateValue = ev.target.value;
+        changeInfo(boardValue,dateValue)
+      });
+      //宴会厅change事件
+      $('#offline').on("change",function (e) {
+        changeInfo(e.target.value,$('.form_datetime').val())
+      });
+      //初始化查询
+      changeInfo ($('#offline').val(),$('.form_datetime').val());
+      function changeInfo(boardValue,dateValue) {
+        var hall_id=boardValue;
+        var date=dateValue.replace(" ", "-");
+        $.ajax({
+            type:'GET',
+            url:'{:url("index/index/whereHallDate")}?date='+date+'&hall_id='+hall_id,
+            dataType:'JSON',
+            success:function(data){
+                if(data.code!=200){
+                  alert(data.error);
+                  return false;
+                }
+                var html='';
+                if(!jQuery.isEmptyObject(data.data)){
+                    $(data.data).each(function(k,v){
+                        html+='<tr>';
+                        $(v).each(function(_k,_v){
+                            if(_v==''){
+                                html+='<td></td>';
+                            }else{
+                                html+='<td><div class="dateInfo">'+_v.day+'</div><div class="screenSelect">';
+                                if($.inArray(0, _v.chang)==-1){
+                                    html+='<span class="colorFree"><a href="{:url("index/index/book",["chang"=>0])}?hall_id='+_v.hall_id+'&daytime='+_v.daytime+'">午</a></span>';
+                                }else{
+                                    html+='<span class="colorBusy">午</span>';
+                                }
+                                html+='/';
+                                if($.inArray(1, _v.chang)==-1){
+                                    html+='<span class="colorFree"><a href="{:url("index/index/book",["chang"=>1])}?hall_id='+_v.hall_id+'&daytime='+_v.daytime+'">晚</a></span>';
+                                }else{
+                                    html+='<span class="colorBusy">晚</span>';
+                                }
+                                html+='</div></td>';
+                            }
+                        });
+                        html+='</tr>';
+                    });
+                    $('#date_list').html(html);
+                }
+            }
+        });
+      }
+    })
+</script>
+</html>

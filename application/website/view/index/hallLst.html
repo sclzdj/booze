@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Pragma" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, maximum-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="wap-font-scale" content="no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="https://cdn.bootcss.com/jquery/1.12.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="__STATIC__/website/css/index.css">
+    <script src="__STATIC__/website/js/swiper-3.4.2.jquery.min.js"></script>
+    <title>宴会厅-{$hotel['name']}</title>
+    <script>
+      (function (root) {
+        var docEl = document.documentElement,
+          timer = null,
+          width, last;
+        function changeRem () {
+          width = docEl.getBoundingClientRect().width;
+          if (last === width) { return; }
+          last = width;
+          root.rem = (width / 375) * 100;
+
+          if (/ZTE U930_TD/.test(navigator.userAgent)) {
+            root.rem = root.rem * 1.13;
+          }
+          docEl.style.fontSize = root.rem + 'px';
+        }
+        changeRem();
+        root.addEventListener('resize', function () {
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+        });
+        root.addEventListener('orientationchange', function () {
+          var getTarget = document.getElementById("landscape");
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+          if(window.orientation==90||window.orientation==-90){
+            getTarget.style.display = "block";
+          }else{
+            getTarget.style.display = "none";
+          }
+        });
+      })(window, undefined);
+    </script>
+</head>
+<body>
+<div class="contain boardlist" id="hall_list">
+    {volist name="halls" id="vo"}
+    <div class="listSection">
+        <img src="__STATIC__/../{$vo.main_img}" alt="宴会厅主图" onclick='location.href="{:url('index/hallInfo',['hotel_id'=>$hotel_id,'id'=>$vo['id']])}"'>
+        <dl>
+            <dt class="lineOver1" {if condition="$vo['url'] neq ''"}onclick='location.href="{$vo.url}"' style="color: #1F4B90;"{/if}>{$vo.name}</dt>
+            <dd class="lineOver2">{$vo.info}</dd>
+        </dl>
+    </div>
+    {/volist}
+</div>
+<input type="hidden" value='1' name='page'>
+<p id="hall_load" style="color:#ccc;border: 1px solid #ccc;font-size: 14px;padding: 5px 10px;width: 95px;margin:20px auto;display: none;text-align: center;">正在加载...</p>
+</body>
+<script>
+  $(function(){
+     $(window).scroll(function() {
+      //$(document).scrollTop() 获取垂直滚动的距离:最小值为0，最大值：文档高度-可视化窗口高度
+      //$(document).scrollLeft() 这是获取水平滚动条的距离
+          //alert("垂直滚动条位置："+$(document).scrollTop()+"--"+$(window).height());
+       if ($(document).scrollTop() <= 0) {
+          //alert("滚动条已经到达顶部为0");
+        }
+        /**
+         *$(document).height():文档的高度
+         *$(window).height()：可视域的高度：窗口的大小：根据浏览窗口的大小变化
+         *判断底部:文档高度<=滚动条垂直高度+可视窗口的高度
+         * */
+        if ( $(document).scrollTop() >= $(document).height() - $(window).height()) {
+            //alert("滚动条已经到达底部为" + $(document).scrollTop());
+            if($('#hall_load').html()=='正在加载...' && $('#hall_load').css('display')=='none'){
+            $('#hall_load').show();
+            var page=$('input[name="page"]').val();
+            //alert(page);
+            $.ajax({
+              type:'GET',
+              url:'?page='+page,
+              dataType:'JSON',
+              success:function(data){
+                $('input[name="page"]').val(parseInt(page)+1);
+                if(data.code!=200){
+                  alert(data.error);
+                  return false;
+                }
+                if(!jQuery.isEmptyObject(data.data)){
+                  var html='';
+                  $(data.data).each(function(k,v){
+                      html+='<div class="listSection"><img src="__STATIC__/../'+v.main_img+'" alt="宴会厅主图" onclick="location.href=\'{:url('index/hallInfo')}?hotel_id={$hotel_id}&id='+v.id+'\'"><dl><dt class="lineOver1"';
+                      if(v.url!==''){
+                        html+=' onclick=\'location.href="'+v.url+'"\' style="color: #1F4B90;"';
+                      }
+                      html+='>'+v.name+'</dt><dd class="lineOver2">'+v.info+'</dd></dl></div>';
+                  });
+                  $('#hall_load').hide();
+                  $('#hall_list').append(html);
+                }else{
+                  $('#hall_load').html('已经没有了...');
+                }
+              }
+          });
+        }
+      }
+    });
+
+  });
+</script>
+</html>

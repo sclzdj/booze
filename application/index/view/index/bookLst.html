@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Pragma" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, maximum-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="wap-font-scale" content="no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="https://cdn.bootcss.com/jquery/1.12.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="__STATIC__/index/css/index.css">
+    <script src="__STATIC__/website/js/dataPicker.js"></script>
+    <link rel="stylesheet" href="__STATIC__/website/css/dataPicker.css">
+    <title>{$hotel.name}-预订列表</title>
+    <script>
+      (function (root) {
+        var docEl = document.documentElement,
+          timer = null,
+          width, last;
+
+        function changeRem() {
+          width = docEl.getBoundingClientRect().width;
+          if (last === width) {
+            return;
+          }
+          last = width;
+          root.rem = (width / 375) * 100;
+
+          if (/ZTE U930_TD/.test(navigator.userAgent)) {
+            root.rem = root.rem * 1.13;
+          }
+          docEl.style.fontSize = root.rem + 'px';
+        }
+
+        changeRem();
+        root.addEventListener('resize', function () {
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+        });
+        root.addEventListener('orientationchange', function () {
+          var getTarget = document.getElementById("landscape");
+          clearTimeout(timer);
+          timer = setTimeout(changeRem, 300);
+          if (window.orientation == 90 || window.orientation == -90) {
+            getTarget.style.display = "block";
+          } else {
+            getTarget.style.display = "none";
+          }
+        });
+      })(window, undefined);
+    </script>
+</head>
+<body>
+<div style="width:95%;position:fixed; top:0; left: 0;background: #DFDFDF;color:#4B4B4B;font-size: 14px;height: 40px;padding: 10px 2.5%;">
+  <p style="line-height: 20px;float: left;" onclick="location.href='{:url('index/index/index')}'">
+    欢迎来到<b>{$hotel.name}</b>！<br>{eq name="user['is_special']" value="1"}管理员{else/}普通员工{/eq}：<b>{$user.username}</b>！
+  </p>
+  <a href="{:url('index/login/logout')}" style="display: block;float: right;background:#bbb;color: #fff;font-size: 16px;height: 40px;line-height: 40px;width: 80px;text-align: center;text-decoration: none;">退&nbsp;出</a>
+</div>
+<div style="margin-top: 60px;"></div>
+
+
+
+<!-- 修改样式start -->
+<div class="hallListSearch">
+<form action="{:url('index/index/bookLst')}" method="get" name="sousuo_form" style="display: block;text-align: center;">
+    <div class="startDate">
+        <span>开始日期</span><input type="text" readonly="readonly" placeholder="开始日期" id="starttime" name="starttime" value="{$starttime}">
+    </div>
+    <div class="endDate">
+        <span>结束日期</span><input type="text" readonly="readonly" placeholder="结束日期" id="endtime" name="endtime" value="{$endtime}">
+    </div>
+    <div class="selectHall">
+        <span>选择宴会厅</span>
+        <select name="hall_id">
+            <option value="0">全部</option>
+            {volist name="halls" id="vo"}
+            <option value="{$vo.id}" {eq name="hall_id" value="$vo['id']"}selected="selected"{/eq}>{$vo.name}</option>
+            {/volist}
+        </select>
+    </div>
+    <div class="hallBtn">
+        <span onclick="sousuo_form.submit()">搜索</span>
+    </div>
+</form>
+</div>
+<!-- 修改样式end -->
+
+
+<div class="contain boardlist" id="book_list">
+    {volist name="books" id="vo"}
+    <div class="listSection block" data-index = "{$vo.id}" id="book_{$vo.id}" onclick="location.href='{:url('index/index/bookInfo',['id'=>$vo['id']])}'">
+      <img src="__STATIC__/../{$vo.main_img}" alt="宴会厅主图">
+      <dl>
+          <dd><span>宴会厅：</span><span class="color1">{$vo.hall_name}</span></dd>
+          <dd><span>场别：</span><span class="color1">{eq name="vo['chang']" value="1"}夜场{else/}午场{/eq}</span></dd>
+          <dd><span>时间：</span><span class="color1">{:date('Y-m-d',$vo['daytime'])}</span></dd>
+      </dl>
+    </div>
+    {/volist}
+</div>
+<input type="hidden" value='1' name='page'>
+<p id="book_load" style="color:#ccc;border: 1px solid #ccc;font-size: 14px;padding: 5px 10px;width: 95px;margin:20px auto;display: none;text-align: center;">正在加载...</p>
+</body>
+<script>
+  $(function(){
+  //插件显示日期
+   starttime.onclick = function () {
+      var dt = new DateTimePicker.Date({
+        lang: 'zh-CN',
+        default: starttime.value
+      })
+      dt.on('selected', function (formatDate, now) {
+        starttime.value = formatDate
+      })
+    };
+    endtime.onclick = function () {
+      var dt = new DateTimePicker.Date({
+        lang: 'zh-CN',
+        default: endtime.value
+      })
+      dt.on('selected', function (formatDate, now) {
+        endtime.value = formatDate
+      })
+    };
+
+     $(window).scroll(function() {
+      //$(document).scrollTop() 获取垂直滚动的距离:最小值为0，最大值：文档高度-可视化窗口高度
+      //$(document).scrollLeft() 这是获取水平滚动条的距离
+          //alert("垂直滚动条位置："+$(document).scrollTop()+"--"+$(window).height());
+       if ($(document).scrollTop() <= 0) {
+          //alert("滚动条已经到达顶部为0");
+        }
+
+
+
+        /**
+         *$(document).height():文档的高度
+         *$(window).height()：可视域的高度：窗口的大小：根据浏览窗口的大小变化
+         *判断底部:文档高度<=滚动条垂直高度+可视窗口的高度
+         * */
+        if ( $(document).scrollTop() >= $(document).height() - $(window).height()) {
+            //alert("滚动条已经到达底部为" + $(document).scrollTop());
+            if($('#book_load').html()=='正在加载...' && $('#book_load').css('display')=='none'){
+            $('#book_load').show();
+            var page=$('input[name="page"]').val();
+            //alert(page);
+            $.ajax({
+              type:'GET',
+              url:'?page='+page+'&hall_id={$hall_id}&starttime={$starttime}&endtime={$endtime}',
+              dataType:'JSON',
+              success:function(data){
+                $('input[name="page"]').val(parseInt(page)+1);
+                if(data.code!=200){
+                  alert(data.error);
+                  return false;
+                }
+                if(!jQuery.isEmptyObject(data.data)){
+                  var html='';
+                  $(data.data).each(function(k,v){
+                      html+='<div class="listSection block" data-index = "'+v.id+'" id="book_'+v.id+'" onclick="location.href=\'{:url("index/index/bookInfo")}?id='+v.id+'\'"><img src="__STATIC__/../'+v.main_img+'" alt="宴会厅主图"><dl><dd><span>宴会厅：</span><span class="color1">'+v.hall_name+'</span></dd><dd><span>场别：</span><span class="color1">';
+                      if(v.chang==1){
+                        html+='夜场';
+                      }else{
+                        html+='午场';
+                      }
+                      html+='</span></dd><dd><span>时间：</span><span class="color1">'+v.daytime+'</span></dd></dl></div>';
+                  });
+                  $('#book_load').hide();
+                  $('#book_list').append(html);
+                }else{
+                  $('#book_load').html('已经没有了...');
+                }
+              }
+          });
+        }
+      }
+
+
+    });
+
+  });
+</script>
+
+</html>
